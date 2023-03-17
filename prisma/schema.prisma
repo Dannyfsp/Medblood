@@ -16,7 +16,7 @@ model User {
   lastname    String
   email       String        @unique
   password    String
-  phone       Int
+  phone       String
   isVerified  Boolean       @default(false)
   address     String
   bloodGroup  String
@@ -33,7 +33,7 @@ model Donor {
   lastname    String
   email       String     @unique
   password    String
-  phone       Int
+  phone       String
   isVerified  Boolean    @default(false)
   address     String
   bloodGroup  String
