@@ -1,0 +1,33 @@
+{
+  "name": "medblood",
+  "version": "1.0.0",
+  "description": "A blood bank application API",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://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@github.com/Dannyfsp/Medblood.git"
+  },
+  "keywords": [
+    "blood-bank",
+    "blood-bank-api",
+    "API"
+  ],
+  "author": "Aghogho Daniel Bogare",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dannyfsp/Medblood/issues"
+  },
+  "homepage": "https://github.com/Dannyfsp/Medblood#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.21",
+    "prisma": "^4.11.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2"
+  }
+}
