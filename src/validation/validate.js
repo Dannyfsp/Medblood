@@ -1,11 +1,12 @@
-const validateRegisterInput = (req, res, next) => {
+const validate_register_input = (req, res, next) => {
   const {
     firstname,
     lastname,
     email,
     phone,
     password,
-    bloodGroup,
+    blood_group,
+    weight,
     address,
     state,
   } = req.body;
@@ -23,11 +24,13 @@ const validateRegisterInput = (req, res, next) => {
       return res
         .status(400)
         .json({ message: "Password must not be less than 5 characters" });
-    case !bloodGroup || !/^(A|B|AB|O)[+-]$/.test(bloodGroup):
+    case !blood_group || !/^(A|B|AB|O)[+-]$/.test(bloodGroup):
       return res.status(400).json({
         message:
           "Enter a valid blood group. A+, A-, B+, B-, O+, O-, AB+ or AB-.",
       });
+    case !weight || !/^.*kg$/.test(weight):
+      return res.status(400).json({ message: "Your weight should be in kg" });
     case !address:
       return res.status(400).json({ message: "address is required" });
     case !state:
@@ -39,4 +42,4 @@ const validateRegisterInput = (req, res, next) => {
   }
 };
 
-module.exports = validateRegisterInput;
+module.exports = validate_register_input;

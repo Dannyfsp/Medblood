@@ -10,23 +10,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id          Int           @id @default(autoincrement())
-  firstname   String
-  lastname    String
-  email       String        @unique
-  password    String
-  phone       String
-  isVerified  Boolean       @default(false)
-  address     String
-  bloodGroup  String
-  role        Role          @default(USER)
-  state       String
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  appointment Appointment[]
-}
-
 model Donor {
   id          Int        @id @default(autoincrement())
   firstname   String
@@ -34,37 +17,38 @@ model Donor {
   email       String     @unique
   password    String
   phone       String
-  isVerified  Boolean    @default(false)
+  is_verified Boolean    @default(false)
   address     String
-  bloodGroup  String
+  blood_group String
+  weight      String
+  role        Role       @default(DONOR)
   state       String
-  lastDonated DateTime
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @updatedAt
   donation    Donation[]
+  otp         otp[]
 }
 
 model Donation {
-  id             Int      @id @default(autoincrement())
-  bloodGroup     String
-  dateOfDonation DateTime
-  amount         Int
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  donor          Donor    @relation(fields: [donorId], references: [id])
-  donorId        Int
+  id            Int      @id @default(autoincrement())
+  donation_date DateTime
+  amount        Int
+  last_donation DateTime
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+  donor         Donor    @relation(fields: [donor_id], references: [id])
+  donor_id      Int
 }
 
-model Appointment {
-  id        Int      @id @default(autoincrement())
-  date      DateTime
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id])
-  userId    Int
+model otp {
+  id         Int      @id @default(autoincrement())
+  otp_token  String   @default("")
+  created_at DateTime @default(now()) @db.Timestamp(6)
+  donor      Donor    @relation(fields: [donor_id], references: [id])
+  donor_id   Int
 }
 
 enum Role {
-  USER
+  DONOR
   ADMIN
 }

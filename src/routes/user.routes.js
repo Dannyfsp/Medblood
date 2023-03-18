@@ -1,8 +1,12 @@
 const express = require("express");
-const validateRegisterInput = require("../validation/validate");
-const { userRegistration } = require("../controllers/user.controllers");
-const route = express.Router();
+const validate_register_input = require("../validation/validate");
+const {
+  user_registration,
+  verify_user,
+} = require("../controllers/user.controllers");
+const router = express.Router();
 
-route.post("/users/register", validateRegisterInput, userRegistration);
+router.post("/users/register", validate_register_input, user_registration);
+router.post("/users/verify/:id", verify_user);
 
-module.exports = route;
+module.exports = router;
