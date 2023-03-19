@@ -13,6 +13,7 @@ exports.user_registration = async (req, res) => {
     password,
     blood_group,
     weight,
+    role,
     address,
     state,
   } = req.body;
@@ -48,6 +49,7 @@ exports.user_registration = async (req, res) => {
         password: hashedpwd,
         blood_group: blood_group,
         weight: weight,
+        role: role,
         otp_token: hash_otp,
         address: address,
         state: state,

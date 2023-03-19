@@ -1,7 +1,7 @@
 const prisma = require("./src/config/prisma");
 
 async function main() {
-  await prisma.donation.deleteMany();
+  await prisma.donor.deleteMany();
 }
 
 main();

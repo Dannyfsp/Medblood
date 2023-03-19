@@ -7,11 +7,15 @@ const {
   make_donation,
   get_donations,
   get_donation,
+  update_donation,
+  delete_donation,
+  query_blood_type,
 } = require("../controllers/donate.controllers");
 
 const router = express.Router();
 
-router.get("/users/donation", is_authenticated, get_donations);
+router.get("/users/donations", is_authenticated, get_donations);
+router.get("/users/donation?", query_blood_type);
 router.get(
   "/users/donation/:id",
   is_authenticated,
@@ -19,11 +23,25 @@ router.get(
   get_donation
 );
 router.post(
-  "/users/donation/:id",
+  "/users/donate",
   validate_donation_input,
   is_authenticated,
   check_verified,
   make_donation
+);
+router.put(
+  "/users/donation/:donation_id",
+  validate_donation_input,
+  is_authenticated,
+  check_verified,
+  update_donation
+);
+
+router.delete(
+  "/users/donation/:donation_id",
+  is_authenticated,
+  check_verified,
+  delete_donation
 );
 
 module.exports = router;
