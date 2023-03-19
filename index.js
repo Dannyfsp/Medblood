@@ -13,6 +13,7 @@ app.use(helmet());
 app.use(express.json());
 
 const userRouter = require("./src/routes/user.routes");
+const donateRouter = require("./src/routes/donate.routes");
 
 // serving the home route
 app.get("/api/v1", (req, res) => {
@@ -20,6 +21,7 @@ app.get("/api/v1", (req, res) => {
 });
 
 app.use("/api/v1", userRouter);
+app.use("/api/v1", donateRouter);
 
 const port = process.env.PORT;
 

@@ -47,4 +47,40 @@ const validate_register_input = (req, res, next) => {
   }
 };
 
-module.exports = validate_register_input;
+const validate_user_input = (req, res, next) => {
+  const { email, password } = req.body;
+
+  switch (true) {
+    case !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email):
+      return res.status(400).json({ message: "Enter a valid email address" });
+    case !password || password.length < 5:
+      return res
+        .status(400)
+        .json({ message: "Password must not be less than 5 characters" });
+    default:
+      next();
+  }
+};
+
+const validate_donation_input = (req, res, next) => {
+  const { blood_group, donation_date, amount } = req.body;
+
+  switch (true) {
+    case !blood_group || !/^(A|B|AB|O)[+-]$/.test(blood_group):
+      return res.status(400).json({
+        message:
+          "Enter a valid blood group. A+, A-, B+, B-, O+, O-, AB+ or AB-.",
+      });
+    case !donation_date:
+      return res.status(400).json({ message: "Donation date is required" });
+    case !amount:
+      return res.status(400).json({ message: "amount is required" });
+    default:
+      next();
+  }
+};
+module.exports = {
+  validate_register_input,
+  validate_user_input,
+  validate_donation_input,
+};

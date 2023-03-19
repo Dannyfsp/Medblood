@@ -14,7 +14,7 @@ const send_email = async (options) => {
 
   // Define the email options
   const mail_options = {
-    from: `MEDBLOOD <${SMTP_USER}>`,
+    from: `Medblood <${SMTP_USER}>`,
     to: options.email,
     subject: options.subject,
     html: options.html,

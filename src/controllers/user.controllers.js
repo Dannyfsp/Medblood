@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const prisma = require("../config/prisma");
 const send_email = require("../utils/sendMail");
+const jwt = require("jsonwebtoken");
 
 exports.user_registration = async (req, res) => {
   const {
@@ -30,7 +31,7 @@ exports.user_registration = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedpwd = await bcrypt.hash(password, salt);
 
-    // created otpToken
+    // created otp_token
     const generate_otp = Math.floor(100000 + Math.random() * 900000);
     const generated_otp = generate_otp.toString();
 
@@ -55,17 +56,21 @@ exports.user_registration = async (req, res) => {
 
     await send_email({
       email: user.email,
-      subject: "Welcome to Medblood APP",
-      html: `<h1>Hi ${firstname}, we welcome you to Medblood the best blood bank App. PLease use this token: <strong>${generated_otp}</strong></h1>`,
+      subject: "Welcome to Medblood 😊",
+      html: `<h1>Hi ${firstname}</h1>,
+            <p>Welcome to Medblood, the best blood bank App. Please use this token: <strong>${generated_otp}</strong> to verify your account</p>`,
     });
     return res.status(201).json({
       status: "Success",
       message:
         "user created successfully, please check your email for token and verify your account",
-      user,
+      user: user.id,
+      user_name: user.firstname,
+      user_email: user.email,
+      user_age: user.age,
+      user_blood_group: user.blood_group,
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({ status: "Failed", message: error.message });
   }
 };
@@ -118,7 +123,85 @@ exports.verify_user = async (req, res) => {
       message: `congratulations ${user_otp.firstname} 😊, your account has be verified.`,
     });
   } catch (error) {
-    console.log(error);
+    return res.status(500).json({ status: "Failed", message: error.message });
+  }
+};
+
+exports.request_verification = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await prisma.donor.findFirst({
+      where: { email: email },
+    });
+    if (!user) {
+      return res.status(400).json({ message: "user does not exist" });
+    }
+    // created otp_token
+    const generate_otp = Math.floor(100000 + Math.random() * 900000);
+    const generated_otp = generate_otp.toString();
+
+    // hash password before storing it in database
+    const salt = await bcrypt.genSalt(10);
+    const hash_otp = await bcrypt.hash(generated_otp, salt);
+    await prisma.donor.update({
+      where: { email: email },
+      data: { otp_token: hash_otp, otp_date: new Date(Date.now()) },
+    });
+
+    await send_email({
+      email: user.email,
+      subject: "Welcome to Medblood",
+      html: `<h1>Hi ${user.firstname}</h1>, 
+            <p> welcome to Medblood, the best blood bank App. Please use this token: <strong>${generated_otp}</strong> to verify your account</p>`,
+    });
+    return res.status(201).json({
+      status: "Success",
+      message: "Please check your email for token and verify your account",
+      user: user.id,
+      user_email: user.email,
+    });
+  } catch (error) {
+    return res.status(500).json({ status: "Failed", message: error.message });
+  }
+};
+
+exports.user_login = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    // check if user exist
+    const user = await prisma.donor.findFirst({
+      where: { email: email },
+    });
+    if (!user) {
+      return res.status(400).json({ message: "user does not exist" });
+    }
+
+    // validate password
+    const valid_pwd = await bcrypt.compare(password, user.password);
+    if (!valid_pwd) {
+      return res.status(400).json({ message: "Invalid password" });
+    }
+
+    const token_data = {
+      id: user.id,
+      email: user.email,
+      is_verified: user.is_verified,
+    };
+    const token = await jwt.sign(token_data, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRY,
+    });
+
+    res.cookie("Access_token", token, {
+      httpOnly: true,
+    });
+
+    return res.status(200).json({
+      status: "Success",
+      message: "user logged in successful",
+      user_id: user.id,
+      token: token,
+    });
+  } catch (error) {
     return res.status(500).json({ status: "Failed", message: error.message });
   }
 };

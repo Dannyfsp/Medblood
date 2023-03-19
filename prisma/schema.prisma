@@ -33,6 +33,7 @@ model Donor {
 
 model Donation {
   id            Int       @id @default(autoincrement())
+  blood_group   String
   donation_date DateTime
   amount        Int
   last_donation DateTime?
