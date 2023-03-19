@@ -2,6 +2,7 @@ const validate_register_input = (req, res, next) => {
   const {
     firstname,
     lastname,
+    age,
     email,
     phone,
     password,
@@ -16,6 +17,10 @@ const validate_register_input = (req, res, next) => {
       return res.status(400).json({ message: "firstname is required" });
     case !lastname:
       return res.status(400).json({ message: "lastname is required" });
+    case !age || age < 16:
+      return res
+        .status(400)
+        .json({ message: "You must be 16 years old and above" });
     case !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email):
       return res.status(400).json({ message: "Enter a valid email address" });
     case !phone || !/^[0-9]{11}$/.test(phone):

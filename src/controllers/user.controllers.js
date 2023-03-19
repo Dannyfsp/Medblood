@@ -6,6 +6,7 @@ exports.user_registration = async (req, res) => {
   const {
     firstname,
     lastname,
+    age,
     email,
     phone,
     password,
@@ -16,7 +17,7 @@ exports.user_registration = async (req, res) => {
   } = req.body;
   try {
     // check if user already exist in database
-    const user_exist = await prisma.Donor.findFirst({
+    const user_exist = await prisma.donor.findFirst({
       where: { email: email },
     });
     if (user_exist) {
@@ -36,10 +37,11 @@ exports.user_registration = async (req, res) => {
     // hash otp before saving it to database
     const hash_otp = await bcrypt.hash(generated_otp, salt);
 
-    const user = await prisma.Donor.create({
+    const user = await prisma.donor.create({
       data: {
         firstname: firstname,
         lastname: lastname,
+        age: age,
         email: email,
         phone: phone,
         password: hashedpwd,
@@ -72,7 +74,7 @@ exports.verify_user = async (req, res) => {
   const { id } = req.params;
   const { otp } = req.body;
   try {
-    const user_otp = await prisma.Donor.findUnique({
+    const user_otp = await prisma.donor.findUnique({
       where: { id: Number(id) },
     });
     if (!user_otp) {
@@ -87,7 +89,7 @@ exports.verify_user = async (req, res) => {
 
     if (current_time > expiration_time) {
       // OTP has expired, set otpToken to empty string
-      await prisma.Donor.update({
+      await prisma.donor.update({
         where: { id: Number(id) },
         data: { otp_token: "" },
       });
@@ -99,7 +101,7 @@ exports.verify_user = async (req, res) => {
     // check if OTP is valid
     const valid_otp = await bcrypt.compare(otp, user_otp.otp_token);
     if (!valid_otp) {
-      await prisma.Donor.update({
+      await prisma.donor.update({
         where: { id: Number(id) },
         data: { otp_token: "" },
       });
@@ -107,7 +109,7 @@ exports.verify_user = async (req, res) => {
         message: "Invalid OTP",
       });
     }
-    await prisma.Donor.update({
+    await prisma.donor.update({
       where: { id: Number(id) },
       data: { is_verified: true, otp_token: "" },
     });

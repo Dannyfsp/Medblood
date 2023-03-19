@@ -14,6 +14,7 @@ model Donor {
   id          Int        @id @default(autoincrement())
   firstname   String
   lastname    String
+  age         Int
   email       String     @unique
   password    String
   phone       String
@@ -31,13 +32,13 @@ model Donor {
 }
 
 model Donation {
-  id            Int      @id @default(autoincrement())
+  id            Int       @id @default(autoincrement())
   donation_date DateTime
   amount        Int
-  last_donation DateTime
-  created_at    DateTime @default(now())
-  updated_at    DateTime @updatedAt
-  donor         Donor    @relation(fields: [donor_id], references: [id])
+  last_donation DateTime?
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+  donor         Donor     @relation(fields: [donor_id], references: [id])
   donor_id      Int
 }
 
