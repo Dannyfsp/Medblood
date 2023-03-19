@@ -24,7 +24,7 @@ const validate_register_input = (req, res, next) => {
       return res
         .status(400)
         .json({ message: "Password must not be less than 5 characters" });
-    case !blood_group || !/^(A|B|AB|O)[+-]$/.test(bloodGroup):
+    case !blood_group || !/^(A|B|AB|O)[+-]$/.test(blood_group):
       return res.status(400).json({
         message:
           "Enter a valid blood group. A+, A-, B+, B-, O+, O-, AB+ or AB-.",

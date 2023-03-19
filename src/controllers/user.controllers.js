@@ -16,7 +16,7 @@ exports.user_registration = async (req, res) => {
   } = req.body;
   try {
     // check if user already exist in database
-    const user_exist = await prisma.Person.findFirst({
+    const user_exist = await prisma.Donor.findFirst({
       where: { email: email },
     });
     if (user_exist) {
@@ -45,15 +45,9 @@ exports.user_registration = async (req, res) => {
         password: hashedpwd,
         blood_group: blood_group,
         weight: weight,
+        otp_token: hash_otp,
         address: address,
         state: state,
-      },
-    });
-
-    await prisma.otp.create({
-      data: {
-        otp_token: hash_otp,
-        donor_id: user.id,
       },
     });
 
@@ -78,25 +72,25 @@ exports.verify_user = async (req, res) => {
   const { id } = req.params;
   const { otp } = req.body;
   try {
-    const user_otp = await prisma.otp.findUnique({
-      where: {
-        id: Number(donor_id),
-      },
+    const user_otp = await prisma.Donor.findUnique({
+      where: { id: Number(id) },
     });
-
     if (!user_otp) {
-      await prisma.otp.delete();
       return res.status(400).json({ message: "user does not exist" });
     }
 
+    // set expiration time to 5 minutes after creation
     const current_time = new Date();
     const expiration_time = new Date(
-      user_otp.created_at.getTime() + 5 * 60 * 1000
-    ); // set expiration time to 5 minutes after creation
+      user_otp.otp_date.getTime() + 5 * 60 * 1000
+    );
 
     if (current_time > expiration_time) {
       // OTP has expired, set otpToken to empty string
-      await prisma.otp.delete();
+      await prisma.Donor.update({
+        where: { id: Number(id) },
+        data: { otp_token: "" },
+      });
       return res.status(400).json({
         message: "OTP has expired",
       });
@@ -105,16 +99,18 @@ exports.verify_user = async (req, res) => {
     // check if OTP is valid
     const valid_otp = await bcrypt.compare(otp, user_otp.otp_token);
     if (!valid_otp) {
-      await prisma.otp.delete();
+      await prisma.Donor.update({
+        where: { id: Number(id) },
+        data: { otp_token: "" },
+      });
       return res.status(400).json({
         message: "Invalid OTP",
       });
     }
     await prisma.Donor.update({
       where: { id: Number(id) },
-      data: { isVerified: true },
+      data: { is_verified: true, otp_token: "" },
     });
-    await prisma.otp.delete();
     return res.status(200).json({
       status: "Success",
       message: `congratulations ${user_otp.firstname} 😊, your account has be verified.`,

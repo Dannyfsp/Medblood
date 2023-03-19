@@ -15,7 +15,9 @@ CREATE TABLE "Donor" (
     "weight" TEXT NOT NULL,
     "role" "Role" NOT NULL DEFAULT 'DONOR',
     "state" TEXT NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "otp_token" TEXT NOT NULL,
+    "otp_date" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "created_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Donor_pkey" PRIMARY KEY ("id")
@@ -34,21 +36,8 @@ CREATE TABLE "Donation" (
     CONSTRAINT "Donation_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
-CREATE TABLE "otp" (
-    "id" SERIAL NOT NULL,
-    "otp_token" TEXT NOT NULL DEFAULT '',
-    "created_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "donor_id" INTEGER NOT NULL,
-
-    CONSTRAINT "otp_pkey" PRIMARY KEY ("id")
-);
-
 -- CreateIndex
 CREATE UNIQUE INDEX "Donor_email_key" ON "Donor"("email");
 
 -- AddForeignKey
 ALTER TABLE "Donation" ADD CONSTRAINT "Donation_donor_id_fkey" FOREIGN KEY ("donor_id") REFERENCES "Donor"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "otp" ADD CONSTRAINT "otp_donor_id_fkey" FOREIGN KEY ("donor_id") REFERENCES "Donor"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

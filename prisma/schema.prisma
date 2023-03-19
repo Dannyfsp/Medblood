@@ -23,10 +23,11 @@ model Donor {
   weight      String
   role        Role       @default(DONOR)
   state       String
-  created_at  DateTime   @default(now())
+  otp_token   String
+  otp_date    DateTime   @default(now()) @db.Timestamp(6)
+  created_at  DateTime   @default(now()) @db.Timestamp(6)
   updated_at  DateTime   @updatedAt
   donation    Donation[]
-  otp         otp[]
 }
 
 model Donation {
@@ -38,14 +39,6 @@ model Donation {
   updated_at    DateTime @updatedAt
   donor         Donor    @relation(fields: [donor_id], references: [id])
   donor_id      Int
-}
-
-model otp {
-  id         Int      @id @default(autoincrement())
-  otp_token  String   @default("")
-  created_at DateTime @default(now()) @db.Timestamp(6)
-  donor      Donor    @relation(fields: [donor_id], references: [id])
-  donor_id   Int
 }
 
 enum Role {
