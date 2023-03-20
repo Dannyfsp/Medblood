@@ -2,13 +2,13 @@ const prisma = require("../config/prisma");
 
 exports.make_donation = async (req, res) => {
   const { id } = req.user;
-  const { blood_group, donation_date, amount, last_donation } = req.body;
+  const { bloodgroup, donation_date, amount, last_donation } = req.body;
   try {
     const user = await prisma.donor.findUnique({
       where: { id: Number(id) },
     });
 
-    if (blood_group !== user.blood_group) {
+    if (bloodgroup !== user.bloodgroup) {
       return res.status(400).json({
         message: "Blood group must tally",
       });
@@ -23,7 +23,7 @@ exports.make_donation = async (req, res) => {
     }
     const donation = await prisma.donation.create({
       data: {
-        blood_group: blood_group,
+        bloodgroup: bloodgroup,
         donation_date: donation_date,
         amount: amount,
         last_donation: last_donation,
@@ -42,12 +42,12 @@ exports.make_donation = async (req, res) => {
 
 exports.get_donations = async (req, res) => {
   try {
-    const all_donation = await prisma.donation.findMany({
+    const donations = await prisma.donation.findMany({
       select: {
-        donor: { select: { blood_group: true, age: true, weight: true } },
+        donor: { select: { bloodgroup: true, age: true, weight: true } },
       },
     });
-    return res.status(200).json({ status: "Success", all_donation });
+    return res.status(200).json({ status: "Success", donations });
   } catch (error) {
     return res.status(401).json({ status: "Failed", error: error.message });
   }
@@ -56,11 +56,11 @@ exports.get_donations = async (req, res) => {
 exports.get_donation = async (req, res) => {
   const { id } = req.user;
   try {
-    const get_donation = await prisma.donor.findFirst({
+    const donation = await prisma.donor.findFirst({
       where: { id: Number(id) },
       select: { donation: true },
     });
-    return res.status(200).json({ status: "Success", get_donation });
+    return res.status(200).json({ status: "Success", donation });
   } catch (error) {
     return res.status(401).json({ status: "Failed", error: error.message });
   }
@@ -69,7 +69,7 @@ exports.get_donation = async (req, res) => {
 exports.update_donation = async (req, res) => {
   const { id } = req.user;
   const { donation_id } = req.params;
-  const { blood_group, donation_date, amount, last_donation } = req.body;
+  const { bloodgroup, donation_date, amount, last_donation } = req.body;
   try {
     const user = await prisma.donor.findUnique({
       where: { id: Number(id) },
@@ -83,12 +83,12 @@ exports.update_donation = async (req, res) => {
     const update_info = await prisma.donor.update({
       where: { id: Number(id) },
       data: {
-        blood_group: blood_group,
+        bloodgroup: bloodgroup,
         donation: {
           update: {
             where: { id: Number(donation_id) },
             data: {
-              blood_group: blood_group,
+              bloodgroup: bloodgroup,
               donation_date: donation_date,
               amount: amount,
               last_donation: last_donation,
@@ -137,16 +137,19 @@ exports.delete_donation = async (req, res) => {
 };
 
 exports.query_blood_type = async (req, res) => {
-  const { blood_group } = req.query;
+  const { bloodgroup } = req.query;
   try {
     const results = await prisma.donation.findMany({
-      where: { blood_group: blood_group },
-      select: { blood_group: true },
+      where: {
+        bloodgroup: {
+          contains: bloodgroup || "",
+        },
+      },
     });
 
-    if (!results) {
+    if (results === null) {
       return res.status(400).json({
-        message: `donation with the blood group ${blood_group} does not exist`,
+        message: `donation with the blood group ${bloodgroup} does not exist`,
       });
     }
     return res.status(200).json({ status: "Success", results });

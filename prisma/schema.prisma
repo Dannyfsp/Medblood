@@ -20,7 +20,7 @@ model Donor {
   phone       String
   is_verified Boolean    @default(false)
   address     String
-  blood_group String
+  bloodgroup  String
   weight      String
   role        Role       @default(DONOR)
   state       String
@@ -33,7 +33,7 @@ model Donor {
 
 model Donation {
   id            Int       @id @default(autoincrement())
-  blood_group   String
+  bloodgroup    String
   donation_date DateTime
   amount        Int
   last_donation DateTime?

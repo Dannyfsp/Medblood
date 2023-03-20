@@ -6,7 +6,7 @@ const validate_register_input = (req, res, next) => {
     email,
     phone,
     password,
-    blood_group,
+    bloodgroup,
     weight,
     address,
     state,
@@ -29,7 +29,7 @@ const validate_register_input = (req, res, next) => {
       return res
         .status(400)
         .json({ message: "Password must not be less than 5 characters" });
-    case !blood_group || !/^(A|B|AB|O)[+-]$/.test(blood_group):
+    case !bloodgroup || !/^(A|B|AB|O)[+-]$/.test(bloodgroup):
       return res.status(400).json({
         message:
           "Enter a valid blood group. A+, A-, B+, B-, O+, O-, AB+ or AB-.",
@@ -63,10 +63,10 @@ const validate_user_input = (req, res, next) => {
 };
 
 const validate_donation_input = (req, res, next) => {
-  const { blood_group, donation_date, amount } = req.body;
+  const { bloodgroup, donation_date, amount } = req.body;
 
   switch (true) {
-    case !blood_group || !/^(A|B|AB|O)[+-]$/.test(blood_group):
+    case !bloodgroup || !/^(A|B|AB|O)[+-]$/.test(bloodgroup):
       return res.status(400).json({
         message:
           "Enter a valid blood group. A+, A-, B+, B-, O+, O-, AB+ or AB-.",

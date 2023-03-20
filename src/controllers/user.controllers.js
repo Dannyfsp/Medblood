@@ -11,7 +11,7 @@ exports.user_registration = async (req, res) => {
     email,
     phone,
     password,
-    blood_group,
+    bloodgroup,
     weight,
     role,
     address,
@@ -47,7 +47,7 @@ exports.user_registration = async (req, res) => {
         email: email,
         phone: phone,
         password: hashedpwd,
-        blood_group: blood_group,
+        bloodgroup: bloodgroup,
         weight: weight,
         role: role,
         otp_token: hash_otp,
@@ -66,11 +66,12 @@ exports.user_registration = async (req, res) => {
       status: "Success",
       message:
         "user created successfully, please check your email for token and verify your account",
-      user: user.id,
-      user_name: user.firstname,
-      user_email: user.email,
-      user_age: user.age,
-      user_blood_group: user.blood_group,
+      id: user.id,
+      name: user.firstname,
+      email: user.email,
+      age: user.age,
+      bloodgroup: user.bloodgroup,
+      weight: user.weight,
     });
   } catch (error) {
     return res.status(500).json({ status: "Failed", message: error.message });
@@ -81,21 +82,19 @@ exports.verify_user = async (req, res) => {
   const { id } = req.params;
   const { otp } = req.body;
   try {
-    const user_otp = await prisma.donor.findUnique({
+    const user = await prisma.donor.findUnique({
       where: { id: Number(id) },
     });
-    if (!user_otp) {
+    if (!user) {
       return res.status(400).json({ message: "user does not exist" });
     }
 
     // set expiration time to 5 minutes after creation
     const current_time = new Date();
-    const expiration_time = new Date(
-      user_otp.otp_date.getTime() + 5 * 60 * 1000
-    );
+    const expiration_time = new Date(user.otp_date.getTime() + 5 * 60 * 1000);
 
     if (current_time > expiration_time) {
-      // OTP has expired, set otpToken to empty string
+      // OTP has expired, set otp_token to empty string
       await prisma.donor.update({
         where: { id: Number(id) },
         data: { otp_token: "" },
@@ -106,7 +105,7 @@ exports.verify_user = async (req, res) => {
     }
 
     // check if OTP is valid
-    const valid_otp = await bcrypt.compare(otp, user_otp.otp_token);
+    const valid_otp = await bcrypt.compare(otp, user.otp_token);
     if (!valid_otp) {
       await prisma.donor.update({
         where: { id: Number(id) },
@@ -122,7 +121,7 @@ exports.verify_user = async (req, res) => {
     });
     return res.status(200).json({
       status: "Success",
-      message: `congratulations ${user_otp.firstname} 😊, your account has be verified.`,
+      message: `congratulations ${user.firstname} 😊, your account has be verified.`,
     });
   } catch (error) {
     return res.status(500).json({ status: "Failed", message: error.message });
@@ -201,6 +200,7 @@ exports.user_login = async (req, res) => {
       status: "Success",
       message: "user logged in successful",
       user_id: user.id,
+      user_email: user.email,
       token: token,
     });
   } catch (error) {
