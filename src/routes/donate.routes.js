@@ -15,13 +15,8 @@ const {
 const router = express.Router();
 
 router.get("/users/donations", is_authenticated, get_donations);
-router.get("/users/search", query_blood_type);
-router.get(
-  "/users/donation/:id",
-  is_authenticated,
-  check_verified,
-  get_donation
-);
+router.get("/users/search", is_authenticated, query_blood_type);
+router.get("/users/donation", is_authenticated, check_verified, get_donation);
 router.post(
   "/users/donate",
   validate_donation_input,

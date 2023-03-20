@@ -13,7 +13,9 @@ const is_authenticated = async (req, res, next) => {
     req.user = decrypt_token;
     next();
   } catch (error) {
-    return res.status(400).json({ error: error.message });
+    return res
+      .status(401)
+      .json({ error: error.message, message: "Authentication Failed" });
   }
 };
 

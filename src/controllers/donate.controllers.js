@@ -32,7 +32,7 @@ exports.make_donation = async (req, res) => {
     });
     return res.status(201).json({
       status: "Success",
-      message: "donation created successfully",
+      message: "donation offer created successfully",
       donation,
     });
   } catch (error) {
@@ -44,12 +44,16 @@ exports.get_donations = async (req, res) => {
   try {
     const donations = await prisma.donation.findMany({
       select: {
-        donor: { select: { bloodgroup: true, age: true, weight: true } },
+        id: true,
+        bloodgroup: true,
+        donation_date: true,
+        amount: true,
+        donor: { select: { id: true, age: true, weight: true, state: true } },
       },
     });
     return res.status(200).json({ status: "Success", donations });
   } catch (error) {
-    return res.status(401).json({ status: "Failed", error: error.message });
+    return res.status(500).json({ status: "Failed", error: error.message });
   }
 };
 
@@ -62,7 +66,7 @@ exports.get_donation = async (req, res) => {
     });
     return res.status(200).json({ status: "Success", donation });
   } catch (error) {
-    return res.status(401).json({ status: "Failed", error: error.message });
+    return res.status(500).json({ status: "Failed", error: error.message });
   }
 };
 
@@ -74,12 +78,14 @@ exports.update_donation = async (req, res) => {
     const user = await prisma.donor.findUnique({
       where: { id: Number(id) },
     });
+
     const donation = await prisma.donation.findFirst({
       where: { donor_id: Number(id) },
     });
     if (!donation) {
       return res.status(400).json({ message: "No donation offer found" });
     }
+
     const update_info = await prisma.donor.update({
       where: { id: Number(id) },
       data: {
@@ -99,7 +105,6 @@ exports.update_donation = async (req, res) => {
       select: { id: true, donation: true },
     });
 
-    console.log(donation.id);
     return res.status(200).json({
       status: "Success",
       message: "donation offer updated successfully",
@@ -121,11 +126,11 @@ exports.delete_donation = async (req, res) => {
     if (!donation) {
       return res.status(400).json({ message: "No donation offer found" });
     }
+
     await prisma.donation.delete({
       where: { id: Number(donation_id) },
     });
 
-    console.log(donation.id);
     return res.status(200).json({
       status: "Success",
       message: "donation offer deleted successfully",
@@ -145,9 +150,16 @@ exports.query_blood_type = async (req, res) => {
           contains: bloodgroup || "",
         },
       },
+      select: {
+        id: true,
+        bloodgroup: true,
+        donation_date: true,
+        amount: true,
+        donor: { select: { id: true, age: true, weight: true, state: true } },
+      },
     });
 
-    if (results === null) {
+    if (!results) {
       return res.status(400).json({
         message: `donation with the blood group ${bloodgroup} does not exist`,
       });

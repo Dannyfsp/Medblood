@@ -17,7 +17,7 @@ const donateRouter = require("./src/routes/donate.routes");
 
 // serving the home route
 app.get("/api/v1", (req, res) => {
-  res.send("Welcome to Medblood: The best blood bank API 😊");
+  res.status(200).send("Welcome to Medblood: The best blood bank APP 😊");
 });
 
 app.use("/api/v1", userRouter);
