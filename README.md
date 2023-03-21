@@ -22,16 +22,16 @@ Medblood application enables users to perform the following:
 
 ## Endpoints
 The following are the endpoints of this application:
-- **POST {URL}/api/v1/users/register** - Enable users to register
-- **POST {URL}/api/v1/users/verify** - Enable users to verify their account with OTP sent to their email immediately after registration
-- **POST {URL}/api/v1/users/login** - Enable users to login
-- **POST {URL}/api/v1/users/request-verification** - Enable users to request verification of their account with their email address
-- **POST {URL}/api/v1/users/donate** - Enable users to make donation offer. This endpoint is protected as users must be logged in and must be verified before accessing this endpoint.
-- **GET {URL}/api/v1/users/donations** - Enable users to view all donations made in the application. This endpoint is protected as users must be logged in before accessing this endpoint
-- **GET {URL}/api/v1/users/donation** - Enable users who have made donation offer to view their donation offer. This endpoint is protected as users must be logged in and verified before accessing this endpoint. 
-- **GET {URL}/api/v1/users/search** - Enable users to search for any blood sample. This endpoint is also protected.
-- **PUT {URL}/api/v1/users/donation/:donation_id** - Enable users to update their donation offer with their donation id. This endpoint is also protected.
-- **DELETE {URL}/api/v1/users/donation/:donation_id** - Endable users to delete their donation offer with their donation id. This endpoint is also protected.
+- **POST https://medblood.herokuapp.com/api/v1/users/register** - Enable users to register
+- **POST https://medblood.herokuapp.com/api/v1/users/verify** - Enable users to verify their account with OTP sent to their email immediately after registration
+- **POST https://medblood.herokuapp.com/api/v1/users/login** - Enable users to login
+- **POST https://medblood.herokuapp.com/api/v1/users/request-verification** - Enable users to request verification of their account with their email address
+- **POST https://medblood.herokuapp.com/api/v1/users/donate** - Enable users to make donation offer. This endpoint is protected as users must be logged in and must be verified before accessing this endpoint.
+- **GET https://medblood.herokuapp.com/api/v1/users/donations** - Enable users to view all donations made in the application. This endpoint is protected as users must be logged in before accessing this endpoint
+- **GET https://medblood.herokuapp.com/api/v1/users/donation** - Enable users who have made donation offer to view their donation offer. This endpoint is protected as users must be logged in and verified before accessing this endpoint. 
+- **GET https://medblood.herokuapp.com/api/v1/users/search** - Enable users to search for any blood sample. This endpoint is also protected.
+- **PUT https://medblood.herokuapp.com/api/v1/users/donation/:donation_id** - Enable users to update their donation offer with their donation id. This endpoint is also protected.
+- **DELETE https://medblood.herokuapp.com/api/v1/users/donation/:donation_id** - Endable users to delete their donation offer with their donation id. This endpoint is also protected.
 
 ## How to use this API
 This API is open source so anyone is allowed to use it with the following steps 😊:
