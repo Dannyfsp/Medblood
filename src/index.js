@@ -23,6 +23,10 @@ app.get("/", (req, res) => {
 app.use("/api/v1", userRouter);
 app.use("/api/v1", donateRouter);
 
+app.all("*", (req, res) => {
+  res.status(404).send("Page not found");
+});
+
 const port = process.env.PORT;
 
 app.listen(port, () => console.log(`Server up and running on port: ${port}`));
