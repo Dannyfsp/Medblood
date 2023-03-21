@@ -12,11 +12,11 @@ app.use(helmet());
 
 app.use(express.json());
 
-const userRouter = require("./src/routes/user.routes");
-const donateRouter = require("./src/routes/donate.routes");
+const userRouter = require("./routes/user.routes");
+const donateRouter = require("./routes/donate.routes");
 
 // serving the home route
-app.get("/api/v1", (req, res) => {
+app.get("/", (req, res) => {
   res.status(200).send("Welcome to Medblood: The best blood bank APP 😊");
 });
 
